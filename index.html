@@ -112,7 +112,16 @@ body{background:var(--bg);min-height:100vh;font-family:'Helvetica Neue',Helvetic
 .addon-global select{background:var(--input);border:1px solid var(--border);border-radius:7px;color:var(--txt-secondary);font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:12px;padding:6px 10px;outline:none;cursor:pointer;transition:border-color .15s}
 .addon-global select:focus{border-color:var(--green);color:var(--txt-primary)}
 
-/* ══ LICENSE TABLE ══ */
+/* ══ ADD-ON ICONS ══ */
+.addon-icon{
+  display:inline-flex;align-items:center;justify-content:center;
+  width:28px;height:28px;border-radius:7px;flex-shrink:0;
+  font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;
+  font-size:10px;font-weight:700;color:#fff;letter-spacing:-.01em;
+  user-select:none;
+}
+.addon-icon-strip{display:flex;align-items:center;gap:5px;}
+.addon-option-row{display:flex;align-items:center;gap:8px;}
 .lic-table-wrap{overflow-x:auto;margin-top:.75rem}
 .lic-table{width:100%;border-collapse:separate;border-spacing:0 4px}
 .lic-thead th{font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--txt-section);padding:0 10px 6px;text-align:left;font-weight:400}
@@ -623,14 +632,20 @@ body{background:var(--bg);min-height:100vh;font-family:'Helvetica Neue',Helvetic
             <option value="0">Sans add-on</option>
             <option value="1">1 add-on</option>
             <option value="2">2 add-ons</option>
+            <option value="3">3 add-ons</option>
           </select>
         </div>
       </div>
       <div class="lic-table-wrap">
         <table class="lic-table">
-          <thead class="lic-thead"><tr><th style="width:40px">#</th><th>Juriste</th><th>Add-ons</th></tr></thead>
+          <thead class="lic-thead"><tr><th style="width:40px">#</th><th>Juriste</th><th>Modules inclus</th><th>Add-ons</th></tr></thead>
           <tbody id="licBody"></tbody>
         </table>
+      </div>
+      <!-- Add-on legend -->
+      <div id="addonLegend" style="margin-top:1.25rem;padding:1rem 1.25rem;background:var(--input);border-radius:10px;border:1px solid var(--border)">
+        <div style="font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--txt-section);margin-bottom:.85rem">Modules disponibles</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:.85rem" id="addonLegendItems"></div>
       </div>
     </div>
 
@@ -1186,7 +1201,7 @@ function toggleTheme(){
 })();
 
 /* ══ PRICING CONSTANTS ══ */
-var PRICES={0:2094,1:3486,2:4878};
+var PRICES={0:2094,1:3486,2:4878,3:6270};
 
 /* ══ STATE ══ */
 var teamSize=10;
@@ -1205,19 +1220,56 @@ function changeTeam(delta){
   renderLicenses();
 }
 
+/* ── Add-on icon definitions ── */
+var ADDON_ICONS = [
+  { letters:'Lt', bg:'#2c2c2c', name:'Flow Litigate', desc:'Automatise l\'analyse de dossiers' },
+  { letters:'Cs', bg:'#1a3a5c', name:'Flow Counsel', desc:'Analyse de risques contractuels et aide à la rédaction' },
+  { letters:'Jx', bg:'#3a1a1a', name:'JobExit', desc:'Simulations de rupture de contrats de travail' },
+  { letters:'Fs', bg:'#1a3a2a', name:'Fiscal', desc:'Encyclopédie Fiscale by Doctrine' },
+];
+
+function addonIconSvg(icon, size){
+  size = size || 28;
+  var r = Math.round(size * 0.28);
+  return '<svg width="'+size+'" height="'+size+'" viewBox="0 0 '+size+' '+size+'" xmlns="http://www.w3.org/2000/svg">'
+    +'<rect width="'+size+'" height="'+size+'" rx="'+r+'" fill="'+icon.bg+'"/>'
+    +'<text x="50%" y="54%" dominant-baseline="middle" text-anchor="middle" '
+    +'fill="white" font-family="\'Helvetica Neue\',Helvetica,Arial,sans-serif" '
+    +'font-size="'+(size*0.36)+'" font-weight="700" letter-spacing="-0.5">'+icon.letters+'</text>'
+    +'</svg>';
+}
+
+function addonIconsForLevel(level){
+  // level 0: no icons, level 1: Lt, level 2: Lt+Cs, level 3: Lt+Cs+Jx
+  var icons = [];
+  for(var i=0;i<level;i++) icons.push(ADDON_ICONS[i]);
+  return icons;
+}
+
 function renderLicenses(){
   var tbody=document.getElementById('licBody');
   tbody.innerHTML='';
   for(var i=0;i<licenses.length;i++){
     var lic=licenses[i];
+    var icons = addonIconsForLevel(lic.addon);
+    var iconsHtml = '<div class="addon-icon-strip">';
+    if(icons.length === 0){
+      iconsHtml += '<span style="font-size:11px;color:var(--txt-muted);font-style:italic">—</span>';
+    } else {
+      icons.forEach(function(ic){ iconsHtml += addonIconSvg(ic, 28); });
+    }
+    iconsHtml += '</div>';
+
     var tr=document.createElement('tr');
     tr.className='lic-row';
     tr.innerHTML='<td><span class="lic-num">'+(i+1)+'</span></td>'
       +'<td><span class="lic-name">Juriste '+(i+1)+'</span></td>'
+      +'<td>'+iconsHtml+'</td>'
       +'<td><select class="lic-addon-select" data-idx="'+i+'" onchange="setAddon('+i+',parseInt(this.value))">'
       +'<option value="0"'+(lic.addon===0?' selected':'')+'>Sans add-on</option>'
       +'<option value="1"'+(lic.addon===1?' selected':'')+'>1 add-on</option>'
       +'<option value="2"'+(lic.addon===2?' selected':'')+'>2 add-ons</option>'
+      +'<option value="3"'+(lic.addon===3?' selected':'')+'>3 add-ons</option>'
       +'</select></td>';
     tbody.appendChild(tr);
   }
@@ -1244,13 +1296,13 @@ function computeScenario(rate, licenseArray){
   var baseTotal=0;
   selected.forEach(function(l){baseTotal+=PRICES[l.addon];});
   var countWithAddon=selected.filter(function(l){return l.addon>=1;}).length;
-  var countWith2Addon=selected.filter(function(l){return l.addon>=2;}).length;
+  var countWith2Addon=selected.filter(function(l){return l.addon===2;}).length; // exactement 2
   var majorityHasAddon=countWithAddon>0&&countWithAddon>=n*0.5;
   var majorityHas2Addon=countWith2Addon>0&&countWith2Addon>=n*0.5;
   var discount=0;
   if(rate===0.75){discount=5;if(majorityHasAddon)discount+=5;}
   else if(rate===1.0){discount=10;if(majorityHasAddon)discount+=5;}
-  if(majorityHas2Addon)discount+=5;
+  if(majorityHas2Addon)discount+=5; // pas de remise supplémentaire pour 3 add-ons
   discount=Math.min(discount,100);
   return{n:n,rate:rate,selected:selected,baseTotal:baseTotal,discount:discount,total:baseTotal*(1-discount/100),majorityHasAddon:majorityHasAddon,majorityHas2Addon:majorityHas2Addon,countWithAddon:countWithAddon,countWith2Addon:countWith2Addon};
 }
@@ -1539,8 +1591,24 @@ function renderRecoFiltered(results,indexes){
 }
 function renderReco(results){renderRecoFiltered(results,[0,1,2]);}
 
+function renderAddonLegend(){
+  var el = document.getElementById('addonLegendItems');
+  if(!el) return;
+  el.innerHTML = '';
+  ADDON_ICONS.forEach(function(ic, i){
+    var item = document.createElement('div');
+    item.style.cssText = 'display:flex;align-items:center;gap:10px;';
+    item.innerHTML = addonIconSvg(ic, 26)
+      +'<div>'
+      +'<div style="font-size:12px;font-weight:500;color:var(--txt-primary);line-height:1.2">'+ic.name+'</div>'
+      +'<div style="font-size:11px;color:var(--txt-muted);margin-top:1px">'+ic.desc+'</div>'
+      +'</div>';
+    el.appendChild(item);
+  });
+}
+
 /* ══ INIT ══ */
-initLicenses(teamSize);renderLicenses();
+initLicenses(teamSize);renderLicenses();renderAddonLegend();
 
 function togglePriority(el){el.classList.toggle('selected');}
 
