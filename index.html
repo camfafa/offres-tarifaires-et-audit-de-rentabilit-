@@ -340,7 +340,36 @@ body{background:var(--bg);min-height:100vh;font-family:'Helvetica Neue',Helvetic
 .roi-input.has-suffix{padding-right:40px}
 .roi-input.prefilled{border-color:rgba(46,204,113,.4);background:var(--accent-bg);}
 
-/* ── Coût juriste inline fields ── */
+/* ── Sequential ROI blocks ── */
+.roi-seq-block{
+  margin-bottom:1rem;
+  opacity:0;transform:translateY(20px) scale(0.98);
+  transition:opacity .5s cubic-bezier(.4,0,.2,1),transform .5s cubic-bezier(.4,0,.2,1);
+  pointer-events:none;
+}
+.roi-seq-block.roi-seq-visible{
+  opacity:1;transform:translateY(0) scale(1);pointer-events:auto;
+}
+.roi-seq-block.roi-seq-done .card{
+  border-color:rgba(46,204,113,.3);background:var(--card);
+}
+.roi-seq-block.roi-seq-done .roi-seq-footer{display:none;}
+.roi-seq-block.roi-seq-hidden{display:none;}
+.roi-seq-footer{
+  display:flex;align-items:center;justify-content:flex-end;
+  margin-top:1.5rem;padding-top:1rem;
+  border-top:1px solid var(--border);
+}
+
+/* Done badge on validated blocks */
+.roi-seq-done-badge{
+  display:none;align-items:center;gap:5px;
+  margin-left:auto;flex-shrink:0;
+  background:var(--accent-bg);border:1px solid rgba(46,204,113,.3);
+  border-radius:20px;padding:4px 10px;font-size:11px;color:var(--green);letter-spacing:.04em;
+}
+.roi-seq-done-badge svg{width:11px;height:11px;stroke:var(--green);fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
+.roi-seq-block.roi-seq-done .roi-seq-done-badge{display:inline-flex;}
 .cout-juriste-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:.85rem;margin-bottom:0}
 @media(max-width:600px){.cout-juriste-grid{grid-template-columns:1fr}}
 .cj-field{display:flex;flex-direction:column;gap:6px}
@@ -374,14 +403,37 @@ body{background:var(--bg);min-height:100vh;font-family:'Helvetica Neue',Helvetic
 .btn-add-task svg{width:13px;height:13px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round}
 
 /* ── Externalisation ── */
-.extern-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:.85rem;}
+.extern-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:.85rem;align-items:end;}
 @media(max-width:600px){.extern-grid{grid-template-columns:1fr}}
+
+/* ── ROI reveal cards ── */
+.roi-reveal-card{
+  opacity:0;transform:translateY(28px) scale(0.97);
+  transition:opacity .55s cubic-bezier(.4,0,.2,1),transform .55s cubic-bezier(.4,0,.2,1);
+  pointer-events:none;
+  background:var(--card);border:1px solid var(--border);border-radius:16px;
+  padding:1.75rem;box-shadow:var(--card-shadow);
+}
+.roi-reveal-card.revealed{opacity:1;transform:translateY(0) scale(1);pointer-events:auto;}
+.roi-reveal-card.featured{border-color:rgba(46,204,113,.45);background:linear-gradient(145deg,var(--accent-bg) 0%,var(--card) 60%);}
+
+.roi-card-eyebrow{font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--txt-section);margin-bottom:.5rem}
+.roi-card-title{font-family:'Times New Roman',serif;font-size:1.15rem;font-weight:400;color:var(--txt-primary);margin-bottom:.25rem;line-height:1.2}
+.roi-card-desc{font-size:12px;color:var(--txt-muted);line-height:1.6;margin-bottom:1rem}
+.roi-card-divider{height:1px;background:var(--border);margin-bottom:1rem}
+.roi-card-big{font-family:'Times New Roman',serif;font-size:2.8rem;font-weight:400;color:var(--green);line-height:1;margin-bottom:.25rem}
+.roi-card-big.neutral{color:var(--txt-primary)}
+.roi-card-sub{font-size:11px;color:var(--txt-muted)}
+.roi-card-kpis{display:flex;gap:1.5rem;margin-top:1rem;flex-wrap:wrap}
+.roi-card-kpi{display:flex;flex-direction:column;gap:3px}
+.roi-card-kpi-label{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--txt-section)}
+.roi-card-kpi-val{font-family:'Times New Roman',serif;font-size:1.1rem;color:var(--txt-primary)}
+.roi-card-kpi-val.green{color:var(--green)}
 
 /* ROI Result */
 .roi-result{opacity:0;transform:translateY(16px);transition:opacity .5s,transform .5s;pointer-events:none;}
 .roi-result.show{opacity:1;transform:translateY(0);pointer-events:auto;}
-
-.roi-hero-number{
+#roiPostReveal.show{opacity:1!important;transform:translateY(0)!important;pointer-events:auto!important;}
   text-align:center;padding:2.5rem 1.5rem;
   background:linear-gradient(135deg,var(--accent-bg) 0%,var(--card) 100%);
   border:1px solid rgba(46,204,113,.3);border-radius:16px;
@@ -396,7 +448,8 @@ body{background:var(--bg);min-height:100vh;font-family:'Helvetica Neue',Helvetic
 .roi-kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:.85rem;margin-bottom:1.25rem}
 @media(max-width:600px){.roi-kpis{grid-template-columns:1fr 1fr}}
 .roi-kpi-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1rem;text-align:center;box-shadow:var(--card-shadow);transition:transform .2s,border-color .2s;}
-.roi-kpi-card:hover{transform:translateY(-2px);border-color:var(--border-hover)}
+.roi-kpi-card.featured{border-color:rgba(46,204,113,.45);background:linear-gradient(145deg,var(--accent-bg) 0%,var(--card) 70%);}
+@media(max-width:700px){.roi-kpis-top{grid-template-columns:1fr!important;}.roi-kpis-top .roi-kpi-card{grid-column:auto!important;}}
 .roi-kpi-label{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--txt-section);margin-bottom:.5rem}
 .roi-kpi-val{font-family:'Times New Roman',serif;font-size:1.5rem;color:var(--txt-primary);line-height:1}
 .roi-kpi-val.green{color:var(--green)}
@@ -706,143 +759,192 @@ body{background:var(--bg);min-height:100vh;font-family:'Helvetica Neue',Helvetic
       </div>
     </div>
 
-    <!-- ── Section A : Coût de la solution (pré-rempli) ── -->
-    <div class="card" style="margin-bottom:1rem">
-      <div class="roi-section-header">
-        <div class="roi-section-icon green">
-          <svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-4 0v2"/></svg>
-        </div>
-        <div>
-          <div class="roi-section-label">Coût de la solution
-            <small>Pré-rempli depuis votre scénario choisi</small>
+    <!-- ── Section A : Coût de la solution (pré-rempli, toujours visible) ── -->
+    <div class="roi-seq-block" id="roi-block-a">
+      <div class="card" style="margin-bottom:0">
+        <div class="roi-section-header">
+          <div class="roi-section-icon green">
+            <svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-4 0v2"/></svg>
+          </div>
+          <div>
+            <div class="roi-section-label">Coût de la solution
+              <small>Pré-rempli depuis votre scénario choisi</small>
+            </div>
+          </div>
+          <div class="prefilled-badge">
+            <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+            Pré-rempli
+          </div>
+          <div class="roi-seq-done-badge">
+            <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+            Validé
           </div>
         </div>
-        <div class="prefilled-badge">
-          <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
-          Pré-rempli
-        </div>
-      </div>
-      <div class="roi-fields">
-        <div class="roi-field">
-          <label>Nombre de juristes équipés</label>
-          <div class="roi-input-wrap">
-            <input type="number" class="roi-input prefilled has-suffix" id="roi_n_juristes" min="1" oninput="syncCostPerLicense();computeROI()">
-            <span class="roi-suffix">juristes</span>
+        <div class="roi-fields">
+          <div class="roi-field">
+            <label>Nombre de juristes équipés</label>
+            <div class="roi-input-wrap">
+              <input type="number" class="roi-input prefilled has-suffix" id="roi_n_juristes" min="1" oninput="syncCostPerLicense()">
+              <span class="roi-suffix">juristes</span>
+            </div>
+          </div>
+          <div class="roi-field">
+            <label>Investissement total annuel HT</label>
+            <div class="roi-input-wrap">
+              <span class="roi-prefix">€</span>
+              <input type="number" class="roi-input prefilled has-prefix" id="roi_invest_total" min="0" oninput="syncCostPerLicense()">
+            </div>
+          </div>
+          <div class="roi-field full">
+            <label>Coût par licence / an</label>
+            <div class="roi-input-wrap">
+              <span class="roi-prefix">€</span>
+              <input type="number" class="roi-input prefilled has-prefix has-suffix" id="roi_cout_licence" min="0" oninput="syncTotalFromLicense()">
+              <span class="roi-suffix">/ juriste</span>
+            </div>
+            <span class="field-hint">Calculé automatiquement · modifiable</span>
           </div>
         </div>
-        <div class="roi-field">
-          <label>Investissement total annuel HT</label>
-          <div class="roi-input-wrap">
-            <span class="roi-prefix">€</span>
-            <input type="number" class="roi-input prefilled has-prefix" id="roi_invest_total" min="0" oninput="syncCostPerLicense();computeROI()">
-          </div>
-        </div>
-        <div class="roi-field full">
-          <label>Coût par licence / an</label>
-          <div class="roi-input-wrap">
-            <span class="roi-prefix">€</span>
-            <input type="number" class="roi-input prefilled has-prefix has-suffix" id="roi_cout_licence" min="0" oninput="syncTotalFromLicense();computeROI()">
-            <span class="roi-suffix">/ juriste</span>
-          </div>
-          <span class="field-hint">Calculé automatiquement · modifiable</span>
+        <div class="roi-seq-footer">
+          <button class="btn-validate" onclick="roiValidateBlock('a')">
+            Valider
+            <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+          </button>
         </div>
       </div>
     </div>
 
     <!-- ── Section B : Coût juriste ── -->
-    <div class="card" style="margin-bottom:1rem">
-      <div class="section-title">Coût juriste</div>
-      <div class="cout-juriste-grid">
-        <div class="cj-field">
-          <label>Taux horaire</label>
-          <div class="cj-input-wrap">
-            <input type="number" class="cj-input" id="cj_taux" value="70" min="1" oninput="computeROI()">
-            <span class="cj-suffix">€/h</span>
+    <div class="roi-seq-block roi-seq-hidden" id="roi-block-b">
+      <div class="card" style="margin-bottom:0">
+        <div class="roi-section-header" style="margin-bottom:1.25rem">
+          <div class="roi-section-icon muted">
+            <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+          </div>
+          <div class="roi-section-label">Coût juriste
+            <small>Paramètres de valorisation du temps de votre équipe</small>
+          </div>
+          <div class="roi-seq-done-badge">
+            <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+            Validé
           </div>
         </div>
-        <div class="cj-field">
-          <label>Jours travaillés / an</label>
-          <div class="cj-input-wrap">
-            <input type="number" class="cj-input" id="cj_jours" value="220" min="1" max="365" oninput="computeROI()">
-            <span class="cj-suffix">j</span>
+        <div class="cout-juriste-grid">
+          <div class="cj-field">
+            <label>Taux horaire</label>
+            <div class="cj-input-wrap">
+              <input type="number" class="cj-input" id="cj_taux" value="70" min="1" oninput="">
+              <span class="cj-suffix">€/h</span>
+            </div>
+          </div>
+          <div class="cj-field">
+            <label>Jours travaillés / an</label>
+            <div class="cj-input-wrap">
+              <input type="number" class="cj-input" id="cj_jours" value="220" min="1" max="365" oninput="">
+              <span class="cj-suffix">j</span>
+            </div>
+          </div>
+          <div class="cj-field">
+            <label>Temps de production / jour</label>
+            <div class="cj-input-wrap">
+              <input type="number" class="cj-input" id="cj_prod" value="6" min="1" max="24" oninput="">
+              <span class="cj-suffix">h</span>
+            </div>
           </div>
         </div>
-        <div class="cj-field">
-          <label>Temps de production / jour</label>
-          <div class="cj-input-wrap">
-            <input type="number" class="cj-input" id="cj_prod" value="6" min="1" max="24" oninput="computeROI()">
-            <span class="cj-suffix">h</span>
-          </div>
+        <div class="roi-seq-footer">
+          <button class="btn-validate" onclick="roiValidateBlock('b')">
+            Valider
+            <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+          </button>
         </div>
       </div>
     </div>
 
-    <!-- ── Section C : Besoins de l'organisation — tâches ── -->
-    <div class="card" style="margin-bottom:1rem">
-      <div class="roi-section-header" style="margin-bottom:1rem">
-        <div class="roi-section-icon muted">
-          <svg viewBox="0 0 24 24"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+    <!-- ── Section C : Tâches & gain de temps ── -->
+    <div class="roi-seq-block roi-seq-hidden" id="roi-block-c">
+      <div class="card" style="margin-bottom:0">
+        <div class="roi-section-header" style="margin-bottom:1rem">
+          <div class="roi-section-icon muted">
+            <svg viewBox="0 0 24 24"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+          </div>
+          <div class="roi-section-label">Les besoins de votre organisation
+            <small>Renseignez les tâches juridiques concernées et le temps estimé gagné.</small>
+          </div>
+          <div class="roi-seq-done-badge">
+            <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+            Validé
+          </div>
         </div>
-        <div class="roi-section-label">Les besoins de votre organisation
-          <small>Renseignez les tâches juridiques concernées et le temps estimé gagné.</small>
+        <div class="section-title">Tâches &amp; gain de temps</div>
+        <div class="tasks-table-wrap">
+          <table class="tasks-table">
+            <thead class="tasks-thead">
+              <tr>
+                <th>Type de tâche</th>
+                <th style="text-align:center">H / jour</th>
+                <th style="text-align:center">Gain %</th>
+                <th style="text-align:center">Criticité</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="tasksBody"></tbody>
+          </table>
+        </div>
+        <button class="btn-add-task" onclick="addTask()">
+          <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Ajouter une tâche
+        </button>
+        <div class="roi-seq-footer">
+          <button class="btn-validate" onclick="roiValidateBlock('c')">
+            Valider
+            <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+          </button>
         </div>
       </div>
-
-      <div class="section-title">Tâches &amp; gain de temps</div>
-      <div class="tasks-table-wrap">
-        <table class="tasks-table">
-          <thead class="tasks-thead">
-            <tr>
-              <th>Type de tâche</th>
-              <th style="text-align:center">H / jour</th>
-              <th style="text-align:center">Gain %</th>
-              <th style="text-align:center">Criticité</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody id="tasksBody"></tbody>
-        </table>
-      </div>
-      <button class="btn-add-task" onclick="addTask()">
-        <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-        Ajouter une tâche
-      </button>
     </div>
 
-    <!-- ── Section D : Externalisation à des conseils ── -->
-    <div class="card" style="margin-bottom:1.5rem">
-      <div class="roi-section-header" style="margin-bottom:1rem">
-        <div class="roi-section-icon muted">
-          <svg viewBox="0 0 24 24"><path d="M20 7H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
-        </div>
-        <div class="roi-section-label">Externalisation à des conseils
-          <small>Estimez les économies liées à la réduction des honoraires d'avocats externes.</small>
-        </div>
-      </div>
-
-      <div class="section-title">Réduction des honoraires d'avocats externes</div>
-      <p style="font-size:12px;color:var(--txt-muted);line-height:1.6;margin-bottom:1.25rem">Estimez les économies réalisées grâce à la réduction ou la réinternalisation de dossiers externalisés.</p>
-      <div class="extern-grid">
-        <div class="cj-field">
-          <label>Dossiers externalisés / mois</label>
-          <div class="cj-input-wrap">
-            <input type="number" class="cj-input" id="ext_dossiers" value="5" min="0" oninput="computeROI()">
-            <span class="cj-suffix">dossiers</span>
+    <!-- ── Section D : Externalisation ── -->
+    <div class="roi-seq-block roi-seq-hidden" id="roi-block-d">
+      <div class="card" style="margin-bottom:0">
+        <div class="roi-section-header" style="margin-bottom:1rem">
+          <div class="roi-section-icon muted">
+            <svg viewBox="0 0 24 24"><path d="M20 7H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+          </div>
+          <div class="roi-section-label">Externalisation à des conseils
+            <small>Estimez les économies liées à la réduction des honoraires d'avocats externes.</small>
           </div>
         </div>
-        <div class="cj-field">
-          <label>Montant moyen par dossier</label>
-          <div class="cj-input-wrap">
-            <input type="number" class="cj-input" id="ext_montant" value="2000" min="0" oninput="computeROI()">
-            <span class="cj-suffix">€</span>
+        <div class="section-title">Réduction des honoraires d'avocats externes</div>
+        <p style="font-size:12px;color:var(--txt-muted);line-height:1.6;margin-bottom:1.25rem">Estimez les économies réalisées grâce à la réduction ou la réinternalisation de dossiers externalisés.</p>
+        <div class="extern-grid">
+          <div class="cj-field">
+            <label>Dossiers externalisés / mois</label>
+            <div class="cj-input-wrap">
+              <input type="number" class="cj-input" id="ext_dossiers" value="5" min="0" oninput="">
+              <span class="cj-suffix">dossiers</span>
+            </div>
+          </div>
+          <div class="cj-field">
+            <label>Montant moyen par dossier</label>
+            <div class="cj-input-wrap">
+              <input type="number" class="cj-input" id="ext_montant" value="2000" min="0" oninput="">
+              <span class="cj-suffix">€</span>
+            </div>
+          </div>
+          <div class="cj-field">
+            <label>Réduction estimée grâce à Doctrine</label>
+            <div class="cj-input-wrap">
+              <input type="number" class="cj-input" id="ext_reduction" value="30" min="0" max="100" oninput="">
+              <span class="cj-suffix">%</span>
+            </div>
           </div>
         </div>
-        <div class="cj-field">
-          <label>Réduction estimée grâce à Doctrine</label>
-          <div class="cj-input-wrap">
-            <input type="number" class="cj-input" id="ext_reduction" value="30" min="0" max="100" oninput="computeROI()">
-            <span class="cj-suffix">%</span>
-          </div>
+        <div class="roi-seq-footer">
+          <button class="btn-validate" onclick="roiValidateBlock('d')" style="background:var(--green);box-shadow:0 4px 16px rgba(46,204,113,.3)">
+            <svg viewBox="0 0 24 24"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>
+            Calculer mon ROI
+          </button>
         </div>
       </div>
     </div>
@@ -850,13 +952,34 @@ body{background:var(--bg);min-height:100vh;font-family:'Helvetica Neue',Helvetic
     <!-- ══ RÉSULTATS ROI ══ -->
     <div class="roi-result" id="roiResult">
 
-      <div class="roi-hero-number">
-        <div class="roi-hero-label">Retour sur investissement estimé</div>
-        <div class="roi-hero-val" id="roiHeroVal">—</div>
-        <div class="roi-hero-sub" id="roiHeroSub">Basé sur les hypothèses renseignées</div>
+      <!-- Grille principale : 3 grandes cartes -->
+      <div class="roi-kpis-top" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem;margin-bottom:1rem">
+
+        <!-- Carte ROI -->
+        <div class="roi-kpi-card featured" style="grid-column:1/2">
+          <div class="roi-kpi-label">Retour sur investissement estimé</div>
+          <div class="roi-kpi-val green" id="roiHeroVal" style="font-size:2.4rem;line-height:1;margin:.5rem 0">—</div>
+          <div class="roi-kpi-sub" id="roiHeroSub" style="font-size:11px;line-height:1.5">Basé sur les hypothèses renseignées</div>
+        </div>
+
+        <!-- Carte Temps économisé -->
+        <div class="roi-kpi-card">
+          <div class="roi-kpi-label">Temps économisé</div>
+          <div class="roi-kpi-val green" id="roiTempsEco" style="font-size:1.6rem;line-height:1;margin:.5rem 0">—</div>
+          <div class="roi-kpi-sub" id="roiTempsEcoSub">heures gagnées / an · toute l'équipe</div>
+        </div>
+
+        <!-- Carte Gains ETP -->
+        <div class="roi-kpi-card">
+          <div class="roi-kpi-label">Gains ETP</div>
+          <div class="roi-kpi-val green" id="roiETP" style="font-size:1.6rem;line-height:1;margin:.5rem 0">—</div>
+          <div class="roi-kpi-sub">équivalent temps plein libéré <span style="display:block;margin-top:2px;font-size:10px;color:var(--txt-section)">(base 220 j × 7 h = 1 540 h/ETP)</span></div>
+        </div>
+
       </div>
 
-      <div class="roi-kpis">
+      <!-- Ligne secondaire : 3 KPIs financiers -->
+      <div class="roi-kpis" style="margin-bottom:1.25rem">
         <div class="roi-kpi-card">
           <div class="roi-kpi-label">Gains annuels</div>
           <div class="roi-kpi-val green" id="roiGainsAnnuels">—</div>
@@ -1280,7 +1403,18 @@ function showStep3(result, scenario){
   document.getElementById('roi_invest_total').value=Math.round(result.total);
   document.getElementById('roi_cout_licence').value=Math.round(result.total/result.n);
 
-  // Animate in
+  // Reset all sequential blocks
+  ROI_BLOCKS.forEach(function(id){
+    var el=document.getElementById('roi-block-'+id);
+    if(!el) return;
+    el.classList.remove('roi-seq-visible','roi-seq-done');
+    if(id==='a'){ el.classList.remove('roi-seq-hidden'); }
+    else { el.classList.add('roi-seq-hidden'); }
+  });
+  // Hide results
+  document.getElementById('roiResult').classList.remove('show');
+
+  // Animate in step 3
   s3.style.opacity='0';s3.style.transform='translateY(28px)';
   setTimeout(function(){
     s3.style.transition='opacity .6s,transform .6s';
@@ -1289,8 +1423,8 @@ function showStep3(result, scenario){
 
   setTimeout(function(){
     s3.scrollIntoView({behavior:'smooth',block:'start'});
-    // Lancer le calcul initial
-    setTimeout(function(){ computeROI(); },400);
+    // Animate block A in after scroll
+    setTimeout(function(){ roiRevealBlock('a'); }, 300);
   },150);
 }
 
@@ -1434,9 +1568,33 @@ function renderIncludedPriorities(){
   wrap.style.display='block';
 }
 
+/* ══ ROI SEQUENTIAL REVEAL ══ */
+var ROI_BLOCKS = ['a','b','c','d'];
+
+function roiRevealBlock(id){
+  var el = document.getElementById('roi-block-'+id);
+  if(!el) return;
+  el.classList.remove('roi-seq-hidden');
+  requestAnimationFrame(function(){ requestAnimationFrame(function(){
+    el.classList.add('roi-seq-visible');
+    setTimeout(function(){ el.scrollIntoView({behavior:'smooth',block:'nearest'}); }, 100);
+  });});
+}
+
+function roiValidateBlock(id){
+  var el = document.getElementById('roi-block-'+id);
+  if(!el) return;
+  el.classList.add('roi-seq-done');
+  var idx = ROI_BLOCKS.indexOf(id);
+  if(idx < ROI_BLOCKS.length - 1){
+    setTimeout(function(){ roiRevealBlock(ROI_BLOCKS[idx+1]); }, 200);
+  } else {
+    setTimeout(function(){ computeROI(); }, 200);
+  }
+}
+
 /* ══ ROI CALCULATOR ══ */
 
-/* Default tasks matching the screenshots */
 var roiTasks = [
   {label:'Analyse et rédaction de contrats', hJour:1, gain:20, criticite:'Haute'},
   {label:'Analyse de dossiers contentieux', hJour:1, gain:20, criticite:'Haute'},
@@ -1453,10 +1611,10 @@ function renderTasks(){
     var tr = document.createElement('tr');
     tr.className = 'task-row';
     tr.innerHTML =
-      '<td><input type="text" class="task-input" value="'+escHtml(t.label)+'" oninput="roiTasks['+i+'].label=this.value;computeROI()" placeholder="Nom de la tâche"></td>'
-      +'<td style="text-align:center"><input type="number" class="task-num-input" value="'+t.hJour+'" min="0.1" step="0.1" oninput="roiTasks['+i+'].hJour=parseFloat(this.value)||0;computeROI()"></td>'
-      +'<td style="text-align:center"><input type="number" class="task-num-input" value="'+t.gain+'" min="0" max="100" oninput="roiTasks['+i+'].gain=parseFloat(this.value)||0;computeROI()"></td>'
-      +'<td style="text-align:center"><select class="task-criticite" onchange="roiTasks['+i+'].criticite=this.value;computeROI()">'
+      '<td><input type="text" class="task-input" value="'+escHtml(t.label)+'" oninput="roiTasks['+i+'].label=this.value" placeholder="Nom de la tâche"></td>'
+      +'<td style="text-align:center"><input type="number" class="task-num-input" value="'+t.hJour+'" min="0.1" step="0.1" oninput="roiTasks['+i+'].hJour=parseFloat(this.value)||0"></td>'
+      +'<td style="text-align:center"><input type="number" class="task-num-input" value="'+t.gain+'" min="0" max="100" oninput="roiTasks['+i+'].gain=parseFloat(this.value)||0"></td>'
+      +'<td style="text-align:center"><select class="task-criticite" onchange="roiTasks['+i+'].criticite=this.value">'
         +'<option'+(t.criticite==='Haute'?' selected':'')+'>Haute</option>'
         +'<option'+(t.criticite==='Moyenne'?' selected':'')+'>Moyenne</option>'
         +'<option'+(t.criticite==='Faible'?' selected':'')+'>Faible</option>'
@@ -1471,14 +1629,12 @@ function escHtml(s){return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').re
 function addTask(){
   roiTasks.push({label:'Nouvelle tâche', hJour:0.5, gain:20, criticite:'Moyenne'});
   renderTasks();
-  computeROI();
 }
 
 function deleteTask(i){
   if(roiTasks.length<=1)return;
   roiTasks.splice(i,1);
   renderTasks();
-  computeROI();
 }
 
 function syncCostPerLicense(){
@@ -1497,47 +1653,40 @@ function computeROI(){
   var investTotal=parseFloat(document.getElementById('roi_invest_total').value)||0;
   var tauxHoraire=parseFloat(document.getElementById('cj_taux').value)||70;
   var joursAn=parseFloat(document.getElementById('cj_jours').value)||220;
-  var hProd=parseFloat(document.getElementById('cj_prod').value)||6;
-
-  // Externalisation
   var extDossiers=parseFloat(document.getElementById('ext_dossiers').value)||0;
   var extMontant=parseFloat(document.getElementById('ext_montant').value)||0;
   var extReduction=parseFloat(document.getElementById('ext_reduction').value)||0;
 
   if(!nJuristes||!investTotal)return;
 
-  // Gains tâches : somme sur toutes les tâches de (h/jour × gain% × jours × taux × nJuristes)
-  var gainsTaches = 0;
+  var gainsTaches=0, heuresTachesTotal=0, heuresGagneesTotal=0;
   roiTasks.forEach(function(t){
-    var hGagnees = t.hJour * (t.gain/100) * joursAn; // h/an/juriste
-    gainsTaches += hGagnees * tauxHoraire * nJuristes;
+    var hAn=t.hJour*joursAn;
+    var hGagnees=hAn*(t.gain/100);
+    heuresTachesTotal+=hAn*nJuristes;
+    heuresGagneesTotal+=hGagnees*nJuristes;
+    gainsTaches+=hGagnees*tauxHoraire*nJuristes;
   });
 
-  // Valeur totale du temps mobilisé (pour affichage)
-  var heuresTachesTotal = 0;
-  roiTasks.forEach(function(t){ heuresTachesTotal += t.hJour * joursAn * nJuristes; });
-  var heuresGagneesTotal = 0;
-  roiTasks.forEach(function(t){ heuresGagneesTotal += t.hJour * (t.gain/100) * joursAn * nJuristes; });
+  var gainsExtern=extDossiers*12*extMontant*(extReduction/100);
+  var gainsTotal=gainsTaches+gainsExtern;
+  var beneficeNet=gainsTotal-investTotal;
+  var roi=investTotal>0?((gainsTotal-investTotal)/investTotal*100):0;
+  var paybackMonths=gainsTotal>0?(investTotal/(gainsTotal/12)):999;
 
-  // Gains externalisation
-  var gainsExtern = extDossiers * 12 * extMontant * (extReduction/100);
-
-  var gainsTotal = gainsTaches + gainsExtern;
-  var beneficeNet = gainsTotal - investTotal;
-  var roi = investTotal>0 ? ((gainsTotal-investTotal)/investTotal*100) : 0;
-  var paybackMonths = gainsTotal>0 ? (investTotal/(gainsTotal/12)) : 999;
-
-  // Hero
   document.getElementById('roiHeroVal').textContent=Math.round(roi)+'%';
-  document.getElementById('roiHeroSub').textContent=
-    beneficeNet>0?'Bénéfice net annuel estimé : '+eur(beneficeNet):'Investissement supérieur aux gains estimés — ajustez les hypothèses.';
+  document.getElementById('roiHeroSub').textContent=beneficeNet>0?'Bénéfice net annuel estimé : '+eur(beneficeNet):'Investissement supérieur aux gains estimés — ajustez les hypothèses.';
 
-  // KPIs
+  // Temps économisé & ETP
+  var ETP_HEURES = 220 * 7; // 1 540 h
+  var etpGagnes = heuresGagneesTotal / ETP_HEURES;
+  document.getElementById('roiTempsEco').textContent=Math.round(heuresGagneesTotal).toLocaleString('fr-FR')+' h';
+  document.getElementById('roiTempsEcoSub').textContent='heures gagnées / an · '+nJuristes+' juriste'+(nJuristes>1?'s':'');
+  document.getElementById('roiETP').textContent=etpGagnes.toFixed(2).replace('.',',')+' ETP';
+
   document.getElementById('roiGainsAnnuels').textContent=eur(gainsTotal);
   document.getElementById('roiCoutSolution').textContent=eur(investTotal);
   document.getElementById('roiPaybackMonths').textContent=paybackMonths<24?Math.ceil(paybackMonths)+' mois':'> 24 mois';
-
-  // Breakdown
   document.getElementById('rbHeuresTotal').textContent=Math.round(heuresTachesTotal)+' h';
   document.getElementById('rbHeuresGagnees').textContent=Math.round(heuresGagneesTotal)+' h';
   document.getElementById('rbValeurTaches').textContent=eur(gainsTaches);
@@ -1546,10 +1695,8 @@ function computeROI(){
   document.getElementById('rbInvest').textContent=eur(investTotal);
   document.getElementById('rbBeneficeNet').textContent=eur(beneficeNet);
 
-  // Payback bar
   var pb=Math.min(paybackMonths,24);
-  var fillPct=(1-(pb/24))*100;
-  document.getElementById('paybackFill').style.width=Math.max(2,fillPct)+'%';
+  document.getElementById('paybackFill').style.width=Math.max(2,(1-(pb/24))*100)+'%';
   document.getElementById('paybackLabel').textContent=paybackMonths<24?'Payback : mois '+Math.ceil(paybackMonths):'Payback > 24 mois';
   document.getElementById('paybackNote').textContent=
     paybackMonths<12?'Excellent : retour sur investissement en moins d\'un an.':
@@ -1557,30 +1704,25 @@ function computeROI(){
     paybackMonths<24?'Retour sur investissement atteint dans les 2 ans.':
     'Les gains estimés ne couvrent pas l\'investissement sur 2 ans — ajustez les hypothèses ou la configuration.';
 
-  // Show result
-  document.getElementById('roiResult').classList.add('show');
+  var resultEl=document.getElementById('roiResult');
+  resultEl.classList.add('show');
+  setTimeout(function(){ resultEl.scrollIntoView({behavior:'smooth',block:'start'}); },150);
 
-  // Store for PDF
-  window._roiData={nJuristes,investTotal,tauxHoraire,joursAn,hProd,gainsTaches,gainsExtern,gainsTotal,beneficeNet,roi,paybackMonths,heuresTachesTotal,heuresGagneesTotal,extDossiers,extMontant,extReduction};
+  window._roiData={nJuristes,investTotal,tauxHoraire,joursAn,gainsTaches,gainsExtern,gainsTotal,beneficeNet,roi,paybackMonths,heuresTachesTotal,heuresGagneesTotal};
 }
 
 function updateSensitivity(field,val){
   if(field==='taux'){document.getElementById('cj_taux').value=val;document.getElementById('sens_taux_val').textContent=val+'€/h';}
-  if(field==='gain'){
-    roiTasks.forEach(function(t){t.gain=parseFloat(val);});
-    document.getElementById('sens_gain_val').textContent=val+'%';
-    renderTasks();
-  }
+  if(field==='gain'){roiTasks.forEach(function(t){t.gain=parseFloat(val);});document.getElementById('sens_gain_val').textContent=val+'%';renderTasks();}
   if(field==='extern'){document.getElementById('ext_reduction').value=val;document.getElementById('sens_extern_val').textContent=val+'%';}
   computeROI();
 }
 
 function toggleSensitivity(){
-  var panel=document.getElementById('sensitivityPanel');
-  var chevron=document.getElementById('sensitivityChevron');
-  panel.classList.toggle('open');
-  chevron.classList.toggle('open');
+  document.getElementById('sensitivityPanel').classList.toggle('open');
+  document.getElementById('sensitivityChevron').classList.toggle('open');
 }
+
 
 /* ══ PDF EXPORT ══ */
 function showToast(msg){
